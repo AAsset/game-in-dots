@@ -1,3 +1,25 @@
 <div class="container">
   <h1>{{ title }}</h1>
+  <form class="controls" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>Pick game mode</mat-label>
+      <mat-select formControlName="gamemode">
+        <mat-option *ngFor="let item of gameModes | keyvalue" [value]="item">
+          {{ item.key }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput formControlName="username" placeholder="Enter your name">
+      <mat-error *ngIf="username.invalid && (username.dirty || username.touched)">
+        <div *ngIf="username.errors.required">
+          Name is required.
+        </div>
+        <div *ngIf="username.errors.minlength">
+          Name must be at least 3 characters long.
+        </div>
+      </mat-error>
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">PLAY</button>
+  </form>
 </div>
