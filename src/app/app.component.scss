@@ -20,3 +20,30 @@
     }
   }
 }
+
+.fields {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+
+  .field {
+    width: 50px;
+    height: 50px;
+    background-color: #ffffff;
+    border: 1px solid #ebebed;
+  }
+}
+
+.bg-primary {
+  background-color: #42d8e8 !important;
+}
+
+.bg-success {
+  background-color: #00e871 !important;
+}
+
+.bg-danger {
+  background-color: #e85a5f !important;
+}

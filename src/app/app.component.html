@@ -1,16 +1,18 @@
 <div class="container">
   <h1>{{ title }}</h1>
+
   <form class="controls" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <mat-form-field>
+    <mat-form-field appearance="fill">
       <mat-label>Pick game mode</mat-label>
       <mat-select formControlName="gamemode">
-        <mat-option *ngFor="let item of gameModes | keyvalue" [value]="item">
+        <mat-option *ngFor="let item of gameModes | keyvalue: originalOrder" [value]="item.value">
           {{ item.key }}
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field>
-      <input matInput formControlName="username" placeholder="Enter your name">
+    <mat-form-field appearance="fill">
+      <mat-label>Enter your name</mat-label>
+      <input matInput formControlName="username">
       <mat-error *ngIf="username.invalid && (username.dirty || username.touched)">
         <div *ngIf="username.errors.required">
           Name is required.
@@ -22,4 +24,16 @@
     </mat-form-field>
     <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">PLAY</button>
   </form>
+
+  <div class="fields" *ngIf="isStarted" [ngStyle]="{'width': getFieldsContainerWidth()}">
+    <div class="field"
+        *ngFor="let field of fields; let i = index; trackBy:identify"
+        [ngClass]="{
+          'bg-primary': i === indexOfPaintedBox,
+          'bg-success': field.isRight && field.isSelected,
+          'bg-danger': !field.isRight && field.isSelected
+        }"
+        (click)="onSelect(i)"
+    ></div>
+  </div>
 </div>
