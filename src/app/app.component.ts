@@ -19,6 +19,7 @@ export class AppComponent implements OnInit, OnDestroy {
   isStarted = false;
   indexOfPaintedBox: number;
   fields: Field[] = [];
+  fieldsContainerWidth: string;
   form = new FormGroup({
     gamemode: new FormControl('', Validators.required),
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -47,6 +48,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.form.valid) {
       this.isStarted = true;
       const fieldCount = this.gamemode.value.field;
+      this.fieldsContainerWidth = fieldCount * 52 + 'px';
       this.generateFields(Math.pow(fieldCount, 2));
       this.startGame();
     }
@@ -95,10 +97,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   identify(index, item) {
     return item.id;
-  }
-
-  getFieldsContainerWidth() {
-    return this.gamemode.value.field * 52 + 'px';
   }
 
   ngOnDestroy() {
