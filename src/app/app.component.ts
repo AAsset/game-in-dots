@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { KeyValue } from '@angular/common';
-import { Subject, Observable, timer, Subscription } from 'rxjs';
+import { Subject, Observable, timer, Subscription, zip } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DataService } from './shared/services/data.service';
-import { GameSetting } from './shared/interfaces/game-setting.interface';
-import { Field } from './shared/interfaces/field.interface';
+import { IGameSetting } from './shared/interfaces/game-setting.interface';
+import { IField } from './shared/interfaces/field.interface';
+import { IWinner } from './shared/interfaces/winner.interface';
+import { LiveDataSource } from './shared/utils/live-datasource';
 
 @Component({
   selector: 'app-root',
@@ -15,11 +17,13 @@ import { Field } from './shared/interfaces/field.interface';
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'Game in dots';
-  gameModes: GameSetting | any;
+  gameModes!: IGameSetting;
   isStarted = false;
   indexOfPaintedBox: number;
-  fields: Field[] = [];
+  fields: IField[] = [];
   fieldsContainerWidth: string;
+  displayedColumns = ['position', 'name', 'date'];
+  dataSource = new LiveDataSource();
   form = new FormGroup({
     gamemode: new FormControl('', Validators.required),
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -27,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   timerObs$: Observable<any>;
   stopGame$: Subscription;
-  onDestoy$ = new Subject();
+  onDestroy$ = new Subject();
 
   constructor(
     private dataService: DataService,
@@ -35,9 +39,18 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.dataService.getGameSettings().subscribe(gameModes => this.gameModes = gameModes);
-    this.gamemode.valueChanges.pipe(takeUntil(this.onDestoy$))
-        .subscribe(data => this.isStarted = false);
+    const data: Observable<[IGameSetting, IWinner[]]> = zip(
+      this.dataService.getGameSettings(),
+      this.dataService.getWinners()
+    );
+    data.pipe( takeUntil(this.onDestroy$) )
+        .subscribe(([gameModes, winners]: [IGameSetting, IWinner[]]) => {
+          this.gameModes = gameModes;
+          this.dataSource.data.next(winners);
+        });
+
+    this.gamemode.valueChanges.pipe(takeUntil(this.onDestroy$))
+        .subscribe(() => this.isStarted = false);
   }
 
   get username() { return this.form.get('username'); }
@@ -99,8 +112,12 @@ export class AppComponent implements OnInit, OnDestroy {
     return item.id;
   }
 
+  trackByFn(index, item) {
+    return index;
+  }
+
   ngOnDestroy() {
-    this.onDestoy$.next();
-    this.onDestoy$.complete();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

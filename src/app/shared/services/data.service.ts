@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { GameSetting } from '../interfaces/game-setting.interface';
+import { IGameSetting } from '../interfaces/game-setting.interface';
+import { IWinner } from '../interfaces/winner.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,11 @@ export class DataService {
 
   constructor(private http: HttpClient) { }
 
-  getGameSettings(): Observable<GameSetting> {
-    return this.http.get<GameSetting>(this.API_SERVER + 'game-settings');
+  getGameSettings(): Observable<IGameSetting> {
+    return this.http.get<IGameSetting>(this.API_SERVER + 'game-settings');
+  }
+
+  getWinners(): Observable<IWinner[]> {
+    return this.http.get<IWinner[]>(this.API_SERVER + 'winners');
   }
 }
