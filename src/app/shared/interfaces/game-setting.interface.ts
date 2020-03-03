@@ -1,7 +1,7 @@
 export interface IGameSetting {
-  easyMode: Mode;
-  normalMode: Mode;
-  hardMode: Mode;
+  easyMode: IMode;
+  normalMode: IMode;
+  hardMode: IMode;
 }
 
 export interface IMode {
