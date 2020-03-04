@@ -92,7 +92,7 @@ export class AppComponent implements OnInit, OnDestroy {
       if (hasWinner) {
         this.stopGame$.unsubscribe();
         const winnerName = this.userPoint > this.computerPoint ? this.username.value : 'Computer';
-        this.message = `Winner is ${winnerName} (${winnerName}- ${this.userPoint}/ Computer- ${this.computerPoint})!`;
+        this.message = `Winner is ${winnerName} (${this.username.value}- ${this.userPoint}/ Computer- ${this.computerPoint})!`;
         const winnerData = {
           id: 0,
           winner: winnerName,
