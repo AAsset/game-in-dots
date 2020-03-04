@@ -3,6 +3,7 @@
 }
 
 .container {
+  margin-bottom: 50px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -10,6 +11,7 @@
   justify-content: center;
 
   > div {
+    padding: 0 20px;
     flex: 1;
   }
 }
@@ -43,6 +45,7 @@
     height: 50px;
     background-color: #ffffff;
     border: 1px solid #ebebed;
+    cursor: pointer;
   }
 }
 
@@ -59,12 +62,9 @@
 }
 
 .table-container {
-  position: relative;
-  width: 90%;
   max-height: 80vh;
-  overflow: auto;
+}
 
-  .table {
-    width: 100%;
-  }
+.table {
+  width: 100%;
 }

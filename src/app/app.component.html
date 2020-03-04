@@ -27,6 +27,8 @@
       </button>
     </form>
 
+    <h4 class="title" *ngIf="message">{{ message }}</h4>
+
     <div class="fields" *ngIf="isStarted" [ngStyle]="{'width': fieldsContainerWidth}">
       <div class="field"
           *ngFor="let field of fields; let i = index; trackBy:identify"

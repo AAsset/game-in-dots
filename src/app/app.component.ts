@@ -20,11 +20,14 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'Game in dots';
   gameModes: IGameSetting | any;
   isStarted = false;
-  indexOfPaintedBox: number;
+  indexOfPaintedBox = -1;
   fields: IField[] = [];
   fieldsContainerWidth: string;
   displayedColumns = ['position', 'name', 'date'];
   dataSource = new LiveDataSource();
+  userPoint = 0;
+  computerPoint = 0;
+  message = '';
   form = new FormGroup({
     gamemode: new FormControl('', Validators.required),
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -61,6 +64,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     if (this.form.valid) {
+      this.reset();
       this.isStarted = true;
       const fieldCount = this.gamemode.value.field;
       this.fieldsContainerWidth = fieldCount * 52 + 'px';
@@ -73,7 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const fields = [];
     let i = 0;
     while (i < fieldCount) {
-      fields.push({ id: i + 1, isSelected: false, isRight: false, isActive: false });
+      fields.push({ id: i + 1, isSelected: false, isRight: false });
       i++;
     }
     this.fields = fields;
@@ -83,38 +87,60 @@ export class AppComponent implements OnInit, OnDestroy {
     const gameSettingDelay = this.gamemode.value.delay;
     this.timerObs$ = timer(0, gameSettingDelay);
     this.stopGame$ = this.timerObs$.subscribe(() => {
-      const notMarkedFields = this.fields.filter(item => !item.isSelected);
-      if (notMarkedFields.length > this.fields.length / 2) {
+      if (this.fields[this.indexOfPaintedBox] && !this.fields[this.indexOfPaintedBox].isSelected) {
+        this.fields[this.indexOfPaintedBox].isSelected = true;
+        this.computerPoint++;
+      }
+      const hasWinner = this.userPoint > this.fields.length / 2 || this.computerPoint > this.fields.length / 2;
+      if (hasWinner) {
+        this.stopGame$.unsubscribe();
+        const winnerName = this.userPoint > this.computerPoint ? this.username.value : 'Computer';
+        this.message = `Winner is ${winnerName} (${winnerName}- ${this.userPoint}/ Computer- ${this.computerPoint})!`;
+        const winnerData = {
+          id: 0,
+          winner: winnerName,
+          date: this.fetchDate()
+        };
+        this.sendWinner(winnerData);
+      } else {
+        const notMarkedFields = this.fields.filter(item => !item.isSelected);
         const index = this.helperService.getRandomInt(notMarkedFields.length);
         this.indexOfPaintedBox = this.fields.findIndex(item => item.id === notMarkedFields[index].id);
-        this.changeDetectRef.detectChanges();
-      } else {
-        this.stopGame$.unsubscribe();
-        this.sendWinner();
-        alert('Game is ended!');
       }
+      this.changeDetectRef.detectChanges();
     });
   }
 
-  sendWinner() {
-    const winnerData = {
-      id: 0,
-      winner: this.username.value,
-      date: this.fetchDate()
-    };
+  sendWinner(winnerData: IWinner) {
     this.dataService.addWinner(winnerData)
         .subscribe((data: IWinner[] | any) => this.dataSource.data.next(data));
   }
 
-  fetchDate() {
-    return this.helperService.parseDate(new Date());
+  onSelect(index: number) {
+    if (this.indexOfPaintedBox === index) {
+      this.fields[index].isSelected = true;
+      this.fields[index].isRight = true;
+      this.userPoint++;
+    } else {
+      this.fields[this.indexOfPaintedBox].isSelected = true;
+      this.computerPoint++;
+    }
   }
 
-  onSelect(index: number) {
-    if (!this.fields[index].isSelected) {
-      this.fields[index].isSelected = true;
-      this.fields[index].isRight = this.indexOfPaintedBox === index;
+  reset() {
+    if (this.stopGame$) {
+      this.stopGame$.unsubscribe();
     }
+    this.message = '';
+    this.fields = [];
+    this.fieldsContainerWidth = '0px';
+    this.indexOfPaintedBox = -1;
+    this.userPoint = 0;
+    this.computerPoint = 0;
+  }
+
+  fetchDate() {
+    return this.helperService.parseDate(new Date());
   }
 
   originalOrder = (a: KeyValue<string, object>, b: KeyValue<string, object>): number => {
