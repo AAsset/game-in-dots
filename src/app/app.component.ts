@@ -87,10 +87,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const gameSettingDelay = this.gamemode.value.delay;
     this.timerObs$ = timer(0, gameSettingDelay);
     this.stopGame$ = this.timerObs$.subscribe(() => {
-      if (this.fields[this.indexOfPaintedBox] && !this.fields[this.indexOfPaintedBox].isSelected) {
-        this.fields[this.indexOfPaintedBox].isSelected = true;
-        this.computerPoint++;
-      }
+      this.checkForUserSelection();
       const hasWinner = this.userPoint > this.fields.length / 2 || this.computerPoint > this.fields.length / 2;
       if (hasWinner) {
         this.stopGame$.unsubscribe();
@@ -122,6 +119,13 @@ export class AppComponent implements OnInit, OnDestroy {
       this.fields[index].isRight = true;
       this.userPoint++;
     } else {
+      this.fields[this.indexOfPaintedBox].isSelected = true;
+      this.computerPoint++;
+    }
+  }
+
+  checkForUserSelection() {
+    if (this.fields[this.indexOfPaintedBox] && !this.fields[this.indexOfPaintedBox].isSelected) {
       this.fields[this.indexOfPaintedBox].isSelected = true;
       this.computerPoint++;
     }
