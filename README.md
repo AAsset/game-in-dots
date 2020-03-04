@@ -1,27 +1,21 @@
-# GameInDots
+# Game In Dots
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.4.
+This game for two players (user and computer). How to play?
+* User set game difficulty and name, then press button PLAY
+* At a specified time interval a random square on the field is highlighted in blue. If the user managed to click on the square during this time - he turns green, the user gets a point and the square changes color to green. If not, the field turns red and the point goes to the computer. When a user or computer paints >50% of all possible squares in his color - he becomes the winner.
+* The message will be shown between the control buttons and the squares about the winner. 
+* The results are displayed in a table.
+### [Live Demo](https://gqairqmpa.github.stackblitz.io)
 
-## Development server
+## Getting started
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Make sure you have the Angular CLI installed globally. We use `npm` to manage the dependencies, so we strongly recommend you to use it. You can install it from [Here](https://docs.npmjs.com/cli/install), then run `npm install` to resolve all dependencies (might take a minute).
 
-## Code scaffolding
+Run ng serve for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
+### Building the project
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+## Author
+* **[Asset](https://github.com/AAsset)**
