@@ -19,4 +19,8 @@ export class DataService {
   getWinners(): Observable<IWinner[]> {
     return this.http.get<IWinner[]>(this.API_SERVER + 'winners');
   }
+
+  addWinner(winner: IWinner): Observable<IWinner> {
+    return this.http.post<IWinner>(this.API_SERVER + 'winners', winner);
+  }
 }

@@ -58,6 +58,13 @@
   background-color: #e85a5f !important;
 }
 
-.table {
+.table-container {
+  position: relative;
   width: 90%;
+  max-height: 80vh;
+  overflow: auto;
+
+  .table {
+    width: 100%;
+  }
 }

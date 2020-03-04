@@ -4,6 +4,7 @@ import { KeyValue } from '@angular/common';
 import { Subject, Observable, timer, Subscription, zip } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DataService } from './shared/services/data.service';
+import { HelperService } from './shared/services/helper.service';
 import { IGameSetting } from './shared/interfaces/game-setting.interface';
 import { IField } from './shared/interfaces/field.interface';
 import { IWinner } from './shared/interfaces/winner.interface';
@@ -17,7 +18,7 @@ import { LiveDataSource } from './shared/utils/live-datasource';
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'Game in dots';
-  gameModes!: IGameSetting;
+  gameModes: IGameSetting | any;
   isStarted = false;
   indexOfPaintedBox: number;
   fields: IField[] = [];
@@ -35,6 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private dataService: DataService,
+    private helperService: HelperService,
     private changeDetectRef: ChangeDetectorRef
   ) {}
 
@@ -43,7 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.dataService.getGameSettings(),
       this.dataService.getWinners()
     );
-    data.pipe( takeUntil(this.onDestroy$) )
+    data.pipe(takeUntil(this.onDestroy$))
         .subscribe(([gameModes, winners]: [IGameSetting, IWinner[]]) => {
           this.gameModes = gameModes;
           this.dataSource.data.next(winners);
@@ -82,15 +84,30 @@ export class AppComponent implements OnInit, OnDestroy {
     this.timerObs$ = timer(0, gameSettingDelay);
     this.stopGame$ = this.timerObs$.subscribe(() => {
       const notMarkedFields = this.fields.filter(item => !item.isSelected);
-      if (notMarkedFields.length) {
-        const index = this.getRandomInt(notMarkedFields.length);
+      if (notMarkedFields.length > this.fields.length / 2) {
+        const index = this.helperService.getRandomInt(notMarkedFields.length);
         this.indexOfPaintedBox = this.fields.findIndex(item => item.id === notMarkedFields[index].id);
         this.changeDetectRef.detectChanges();
       } else {
         this.stopGame$.unsubscribe();
+        this.sendWinner();
         alert('Game is ended!');
       }
     });
+  }
+
+  sendWinner() {
+    const winnerData = {
+      id: 0,
+      winner: this.username.value,
+      date: this.fetchDate()
+    };
+    this.dataService.addWinner(winnerData)
+        .subscribe((data: IWinner[] | any) => this.dataSource.data.next(data));
+  }
+
+  fetchDate() {
+    return this.helperService.parseDate(new Date());
   }
 
   onSelect(index: number) {
@@ -98,10 +115,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.fields[index].isSelected = true;
       this.fields[index].isRight = this.indexOfPaintedBox === index;
     }
-  }
-
-  getRandomInt(max: number) {
-    return Math.floor(Math.random() * Math.floor(max));
   }
 
   originalOrder = (a: KeyValue<string, object>, b: KeyValue<string, object>): number => {
