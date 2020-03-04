@@ -53,9 +53,6 @@ export class AppComponent implements OnInit, OnDestroy {
           this.gameModes = gameModes;
           this.dataSource.data.next(winners);
         });
-
-    this.gamemode.valueChanges.pipe(takeUntil(this.onDestroy$))
-        .subscribe(() => this.isStarted = false);
   }
 
   get username() { return this.form.get('username'); }
