@@ -5,7 +5,7 @@ This game for two players (user and computer). How to play?
 * At a specified time interval a random square on the field is highlighted in blue. If the user managed to click on the square during this time - he turns green, the user gets a point and the square changes color to green. If not, the field turns red and the point goes to the computer. When a user or computer paints >50% of all possible squares in his color - he becomes the winner.
 * The message will be shown between the control buttons and the squares about the winner. 
 * The results are displayed in a table.
-### [Live Demo](https://gqairqmpa.github.stackblitz.io)
+### [Live Demo](https://github-4ys5ns.stackblitz.io/)
 
 ## Getting started
 
