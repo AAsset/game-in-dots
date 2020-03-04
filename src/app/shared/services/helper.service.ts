@@ -23,7 +23,8 @@ export class HelperService {
   constructor() { }
 
   parseDate(d: Date) {
-    const time = d.getHours() + ':' + d.getMinutes();
+    const minutes = d.getMinutes() > 9 ? d.getMinutes() : `0${d.getMinutes()}`;
+    const time = d.getHours() + ':' + minutes;
     const day = d.getDay() > 9 ? d.getDay() : `0${d.getDay()}`;
     const monthName = MONTHS[d.getMonth()];
     const year = d.getFullYear();
